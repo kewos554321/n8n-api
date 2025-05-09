@@ -3,6 +3,10 @@ from fastapi import APIRouter, HTTPException, Query
 from typing import Dict, List, Optional
 from datetime import datetime, timedelta
 from app.core.config import settings
+from app.core.logging_config import setup_logger
+
+# 設置日誌記錄器
+logger = setup_logger(__name__, "finance_api.log")
 
 router = APIRouter()
 
@@ -36,6 +40,7 @@ async def list_stocks(
     - limit: 返回的最大股票數量
     """
     try:
+        logger.info(f"Fetching stocks for market: {market} with limit: {limit}")
         stocks = set()
         
         if market in ["all", "us"]:
@@ -51,12 +56,14 @@ async def list_stocks(
         if limit > 0:
             stock_list = stock_list[:limit]
         
+        logger.info(f"Successfully fetched {len(stock_list)} stocks")
         return {
             "total": len(stock_list),
             "market": market,
             "stocks": stock_list
         }
     except Exception as e:
+        logger.error(f"Failed to fetch stocks: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Failed to fetch stocks: {str(e)}")
 
 @router.get("/stock/{symbol}")
@@ -65,6 +72,7 @@ async def get_stock_info(symbol: str):
     獲取特定股票的詳細信息
     """
     try:
+        logger.info(f"Fetching stock info for symbol: {symbol}")
         # 處理台股代碼
         if not symbol.endswith('.TW') and symbol.isdigit():
             symbol = f"{symbol}.TW"
@@ -78,6 +86,7 @@ async def get_stock_info(symbol: str):
         hist = stock.history(start=start_date, end=end_date)
         
         if hist.empty:
+            logger.warning(f"No data found for symbol {symbol}")
             raise HTTPException(status_code=404, detail=f"No data found for symbol {symbol}")
         
         latest_price = hist['Close'].iloc[-1]
@@ -85,6 +94,7 @@ async def get_stock_info(symbol: str):
         # 根據市場調整返回的貨幣單位
         currency = "TWD" if symbol.endswith('.TW') else info.get('currency', 'USD')
         
+        logger.info(f"Successfully fetched stock info for {symbol}")
         return {
             "symbol": symbol,
             "name": info.get('longName', ''),
@@ -108,6 +118,7 @@ async def get_stock_info(symbol: str):
             "timestamp": datetime.now().isoformat()
         }
     except Exception as e:
+        logger.error(f"Failed to fetch stock info for {symbol}: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Failed to fetch stock info: {str(e)}")
 
 @router.get("/stock/{symbol}/history")
