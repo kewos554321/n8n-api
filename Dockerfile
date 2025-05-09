@@ -8,11 +8,15 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# 複製依賴文件
-COPY requirements.txt .
+# 安裝 Poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
 
-# 安裝 Python 依賴
-RUN pip install --no-cache-dir -r requirements.txt
+# 複製 Poetry 配置文件
+COPY pyproject.toml poetry.lock* ./
+
+# 安裝依賴
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-dev --no-interaction --no-ansi
 
 # 複製應用代碼
 COPY . .
@@ -24,5 +28,5 @@ EXPOSE 8000
 ENV PYTHONPATH=/app
 ENV PORT=8000
 
-# 啟動命令
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"] 
+# 啟動命令 (添加性能優化參數)
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4", "--limit-concurrency", "1000", "--timeout-keep-alive", "30"] 
