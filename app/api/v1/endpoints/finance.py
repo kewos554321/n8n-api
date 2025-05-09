@@ -227,3 +227,28 @@ async def get_stock_news(symbol: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to fetch stock news: {str(e)}")
 
+@router.get("/test/{symbol}")
+async def test_stock_fetch(symbol: str):
+    """
+    測試股票資料獲取
+    """
+    try:
+        logger.info(f"Testing stock fetch for symbol: {symbol}")
+        
+        # 處理台股代碼
+        if not symbol.endswith('.TW') and symbol.isdigit():
+            symbol = f"{symbol}.TW"
+            
+        stock = yf.Ticker(symbol)
+        info = stock.info
+        
+        return {
+            "symbol": symbol,
+            "status": "success",
+            "data": info
+        }
+        
+    except Exception as e:
+        logger.error(f"Test failed for {symbol}: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Test failed: {str(e)}")
+
