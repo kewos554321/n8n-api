@@ -4,5 +4,14 @@ python-dotenv==1.0.1
 pydantic==2.6.1
 pydantic-settings==2.1.0
 yfinance==0.2.36
-ffmpeg-python==0.2.0
-python-multipart==0.0.9 
+python-multipart==0.0.9
+typing-extensions>=4.5.0
+starlette>=0.27.0
+anyio>=3.7.1
+click>=8.0.0
+h11>=0.8.0
+httptools>=0.6.1
+python-dateutil>=2.8.2
+pytz>=2024.1
+requests>=2.31.0
+websockets>=12.0 
