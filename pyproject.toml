@@ -1,0 +1,50 @@
+[tool.poetry]
+name = "n8n-api"
+version = "0.1.0"
+description = "API for N8N integration with Yahoo Finance support"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+packages = [
+    { include = "app" }
+]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.109.2"
+uvicorn = "^0.27.1"
+python-dotenv = "^1.0.1"
+pydantic = "^2.6.1"
+pydantic-settings = "^2.1.0"
+yfinance = "^0.2.36"
+python-multipart = "^0.0.9"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.2.0"
+isort = "^5.13.2"
+flake8 = "^7.0.0"
+pytest = "^8.0.0"
+pytest-cov = "^4.1.0"
+pre-commit = "^3.6.0"
+mypy = "^1.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true 
