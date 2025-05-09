@@ -72,9 +72,9 @@ async def get_stock_info(symbol: str):
         stock = yf.Ticker(symbol)
         info = stock.info
         
-        # 獲取最近一天的股價數據
+        # 獲取最近3天的股價數據
         end_date = datetime.now()
-        start_date = end_date - timedelta(days=1)
+        start_date = end_date - timedelta(days=3)
         hist = stock.history(start=start_date, end=end_date)
         
         if hist.empty:
