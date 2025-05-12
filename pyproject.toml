@@ -19,6 +19,7 @@ pydantic-settings = "^2.1.0"
 yfinance = "^0.2.36"
 python-multipart = "^0.0.9"
 finnhub-python = "^2.4.23"
+croniter = "^6.0.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.2.0"
